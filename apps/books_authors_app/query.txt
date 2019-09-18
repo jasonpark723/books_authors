@@ -1,0 +1,962 @@
+      7     name = models.CharField(max_length=255)
+      8     city = models.CharField(max_length=255)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/base.py in __new__(cls, name, bases, attrs)
+    111                         "Model class %s.%s doesn't declare an explicit "
+    112                         "app_label and isn't in an application in "
+--> 113                         "INSTALLED_APPS." % (module, name)
+    114                     )
+    115 
+
+RuntimeError: Model class apps.dojoninja.models.Dojo doesn't declare an explicit app_label and isn't in an application in INSTALLED_APPS.
+
+In [2]: ls                                                                                             
+apps/       db.sqlite3  dojo_ninja/ manage.py*
+
+In [3]:                                                                                                
+Do you really want to exit ([y]/n)? y
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ ls
+apps            db.sqlite3      dojo_ninja      manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ cd apps
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ ls
+dojoninja
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ touch __init__.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ ls
+apps            db.sqlite3      dojo_ninja      manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py makemigrations
+Migrations for 'dojoninja':
+  apps/dojoninja/migrations/0001_initial.py:
+    - Create model Dojo
+    - Create model Ninja
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, dojoninja, sessions
+Running migrations:
+  Rendering model states... DONE
+  Applying dojoninja.0001_initial... OK
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.dojoninja.models import *                                                            
+
+In [2]: Dojo.objects.create(name="Okamula Chusati", city="Irvine", state="CA")                         
+Out[2]: <Dojo: Dojo object>
+
+In [3]: Dojo.objects.create(name="Hello from Fullerton Dojo", city="Fullerton", state="CA")            
+Out[3]: <Dojo: Dojo object>
+
+In [4]: Dojo.objects.create(name="The Best Dojo in NYC", city="New York City", state="NY")             
+Out[4]: <Dojo: Dojo object>
+
+In [5]: alldojos = Dojo.objects.all()                                                                  
+
+In [6]: alldojos.delete()                                                                              
+Out[6]: (3, {'dojoninja.Ninja': 0, 'dojoninja.Dojo': 3})
+
+In [7]: a = Dojo.objects.get(id=1)                                                                     
+---------------------------------------------------------------------------
+DoesNotExist                              Traceback (most recent call last)
+<ipython-input-7-092a4d6fc728> in <module>
+----> 1 a = Dojo.objects.get(id=1)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/manager.py in manager_method(self, *args, **kwargs)
+     83         def create_method(name, method):
+     84             def manager_method(self, *args, **kwargs):
+---> 85                 return getattr(self.get_queryset(), name)(*args, **kwargs)
+     86             manager_method.__name__ = method.__name__
+     87             manager_method.__doc__ = method.__doc__
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/query.py in get(self, *args, **kwargs)
+    383             raise self.model.DoesNotExist(
+    384                 "%s matching query does not exist." %
+--> 385                 self.model._meta.object_name
+    386             )
+    387         raise self.model.MultipleObjectsReturned(
+
+DoesNotExist: Dojo matching query does not exist.
+
+In [8]: Dojo.objects.values()                                                                          
+Out[8]: <QuerySet []>
+
+In [9]: Dojo.objects.create(name="Okamula Chusati", city="Irvine", state="CA")                         
+Out[9]: <Dojo: Dojo object>
+
+In [10]: Dojo.objects.create(name="Hello from Fullerton Dojo", city="Fullerton", state="CA")           
+Out[10]: <Dojo: Dojo object>
+
+In [11]: Dojo.objects.create(name="The Best Dojo in NYC", city="New York City", state="NY")            
+Out[11]: <Dojo: Dojo object>
+
+In [12]: Dojo.objects.values()                                                                         
+Out[12]: <QuerySet [{'id': 4, 'name': 'Okamula Chusati', 'city': 'Irvine', 'state': 'CA'}, {'id': 5, 'name': 'Hello from Fullerton Dojo', 'city': 'Fullerton', 'state': 'CA'}, {'id': 6, 'name': 'The Best Dojo in NYC', 'city': 'New York City', 'state': 'NY'}]>
+
+In [13]: Ninja.objects.create(first_name="Monkey", last_name="Brain", dojo=Dojo.object.get(id=4))      
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-13-2810463e4d49> in <module>
+----> 1 Ninja.objects.create(first_name="Monkey", last_name="Brain", dojo=Dojo.object.get(id=4))
+
+AttributeError: type object 'Dojo' has no attribute 'object'
+
+In [14]: Ninja.objects.create(first_name="Monkey", last_name="Brain", dojo=Dojo.objects.get(id=4))     
+Out[14]: <Ninja: Ninja object>
+
+In [15]: Ninja.objects.create(first_name="Elephant", last_name="Fart", dojo=Dojo.objects.get(id=4))    
+Out[15]: <Ninja: Ninja object>
+
+In [16]: Ninja.objects.create(first_name="Lion", last_name="Smell", dojo=Dojo.objects.get(id=4))       
+Out[16]: <Ninja: Ninja object>
+
+In [17]: Ninja.objects.create(first_name="Pokemon", last_name="Pikachu", dojo=Dojo.objects.get(id=5))  
+Out[17]: <Ninja: Ninja object>
+
+In [18]: Ninja.objects.create(first_name="Dumb", last_name="Dumber", dojo=Dojo.objects.get(id=5))      
+Out[18]: <Ninja: Ninja object>
+
+In [19]: Ninja.objects.create(first_name="Coding", last_name="Dojo", dojo=Dojo.objects.get(id=5))      
+Out[19]: <Ninja: Ninja object>
+
+In [20]: Ninja.objects.create(first_name="Computer", last_name="Fast", dojo=Dojo.objects.get(id=6))    
+Out[20]: <Ninja: Ninja object>
+
+In [21]: Ninja.objects.create(first_name="Iam", last_name="Nobody", dojo=Dojo.objects.get(id=6))       
+Out[21]: <Ninja: Ninja object>
+
+In [22]: Ninja.objects.create(first_name="Mr.", last_name="President", dojo=Dojo.objects.get(id=6))    
+Out[22]: <Ninja: Ninja object>
+
+In [23]:                                                                                               
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ ls
+apps            db.sqlite3      dojo_ninja      manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py makemigrations
+No changes detected
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, dojoninja, sessions
+Running migrations:
+  No migrations to apply.
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: a = Dojo.objects.get(id=4)                                                                     
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-1-2b0ba91b307e> in <module>
+----> 1 a = Dojo.objects.get(id=4)
+
+NameError: name 'Dojo' is not defined
+
+In [2]: from apps.dojoninja.models import *                                                            
+
+In [3]: a = Dojo.objects.get(id=4)                                                                     
+
+In [4]: print(a)                                                                                       
+Dojo object
+
+In [5]: Dojo.objects.get(id=4)                                                                         
+Out[5]: Dojo object: Okamula Chusati Irvine CA dojoninja.Ninja.None (4)
+
+In [6]: Ninja.objects.filter(dojo=Dojo.objects.get(id=4))                                              
+Out[6]: <QuerySet [Ninja object: Monkey Brain Dojo object (1), Ninja object: Elephant Fart Dojo object (2), Ninja object: Lion Smell Dojo object (3)]>
+
+In [7]: Ninja.objects.filter(dojo=Dojo.objects.get(id=4)).all()                                        
+Out[7]: <QuerySet [Ninja object: Monkey Brain Dojo object (1), Ninja object: Elephant Fart Dojo object (2), Ninja object: Lion Smell Dojo object (3)]>
+
+In [8]: first_dojo = Dojo.objects.get(id=4)                                                            
+
+In [9]: first_dojo.ninjas                                                                              
+Out[9]: <django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager at 0x1082d2a58>
+
+In [10]: first_dojo.ninjas.all()                                                                       
+Out[10]: <QuerySet [Ninja object: Monkey Brain Dojo object (1), Ninja object: Elephant Fart Dojo object (2), Ninja object: Lion Smell Dojo object (3)]>
+
+In [11]: last_dojo = Dojo.objects.get(id=6)                                                            
+
+In [12]: last_dojo.ninjas.all()                                                                        
+Out[12]: <QuerySet [Ninja object: Computer Fast Dojo object (7), Ninja object: Iam Nobody Dojo object (8), Ninja object: Mr. President Dojo object (9)]>
+
+In [13]: last_ninja = Ninja.objects.get(id=9)                                                          
+
+In [14]: last_ninja.dojo                                                                               
+Out[14]: Dojo object: The Best Dojo in NYC New York City NY dojoninja.Ninja.None (6)
+
+In [15]:                                                                                               
+Do you really want to exit ([y]/n)? y
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py makemigrations
+You are trying to add a non-nullable field 'desc' to dojo without a default; we can't do that (the database needs something to populate existing rows).
+Please select a fix:
+ 1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
+ 2) Quit, and let me add a default in models.py
+Select an option: 1
+Please enter the default value now, as valid Python
+The datetime and django.utils.timezone modules are available, so you can do e.g. timezone.now
+Type 'exit' to exit this prompt
+>>> 
+Please enter some code, or 'exit' (with no quotes) to exit.
+>>> "old dojo"
+Migrations for 'dojoninja':
+  apps/dojoninja/migrations/0002_dojo_desc.py:
+    - Add field desc to dojo
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, dojoninja, sessions
+Running migrations:
+  Rendering model states... DONE
+  Applying dojoninja.0002_dojo_desc... OK
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.dojoninja.models import *                                                            
+
+In [2]: Dojo.objects.all()                                                                             
+Out[2]: <QuerySet [Dojo object: Okamula Chusati Irvine CA dojoninja.Ninja.None (4), Dojo object: Hello from Fullerton Dojo Fullerton CA dojoninja.Ninja.None (5), Dojo object: The Best Dojo in NYC New York City NY dojoninja.Ninja.None (6)]>
+
+In [3]: dojo1 = Dojo.objects.get(id=4)                                                                 
+
+In [4]: print(dojo1)                                                                                   
+Dojo object
+
+In [5]: print(dojo1.desc)                                                                              
+old dojo
+
+In [6]: Dojo.objects.create(name="Weird Dojo", city="unknown", state="ER")                             
+Out[6]: Dojo object: Weird Dojo unknown ER dojoninja.Ninja.None (7)
+
+In [7]: dojo2 = Dojo.objects.get(id=7)                                                                 
+
+In [8]: dojo2.desc                                                                                     
+Out[8]: ''
+
+In [9]:                                                                                                
+Do you really want to exit ([y]/n)? y
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ ls
+apps            db.sqlite3      dojo_ninja      manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:dojo_ninja jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ ls
+dojo_ninja      harrypotter
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ django-admin startproject book_authors_proj
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ ls
+book_authors_proj       dojo_ninja              harrypotter
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ cd book_authors_proj/
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ ls
+book_authors_proj       manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ mkdir apps
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ cd mkdir
+bash: cd: mkdir: No such file or directory
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ cd apps/
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ ls
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ pwd
+/Users/jason/Desktop/CodingDojo/python_stack/django/django_orm/book_authors_proj/apps
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ touch __init__.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ cd ../manage.py startapp books_authors_app
+bash: cd: ../manage.py: Not a directory
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ python ../manage.py startapp books_authors_app
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ ls
+__init__.py             books_authors_app
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ cd books_authors_app/
+(djangoPy3Env) Jasons-MacBook-Pro-2:books_authors_app jason$ ls
+__init__.py     apps.py         models.py       views.py
+admin.py        migrations      tests.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:books_authors_app jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:apps jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ ls
+apps                    book_authors_proj       manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py makemigrations
+Migrations for 'books_authors_app':
+  apps/books_authors_app/migrations/0001_initial.py:
+    - Create model Author
+    - Create model Book
+    - Add field books to author
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, books_authors_app, contenttypes, sessions
+Running migrations:
+  Rendering model states... DONE
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying books_authors_app.0001_initial... OK
+  Applying sessions.0001_initial... OK
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.books_authors_app.models import *                                                                                                  
+
+In [2]: Book.objects.create(name="C Sharp")                                                                                                          
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-2-b999448a29ea> in <module>
+----> 1 Book.objects.create(name="C Sharp")
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/manager.py in manager_method(self, *args, **kwargs)
+     83         def create_method(name, method):
+     84             def manager_method(self, *args, **kwargs):
+---> 85                 return getattr(self.get_queryset(), name)(*args, **kwargs)
+     86             manager_method.__name__ = method.__name__
+     87             manager_method.__doc__ = method.__doc__
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/query.py in create(self, **kwargs)
+    395         and returning the created object.
+    396         """
+--> 397         obj = self.model(**kwargs)
+    398         self._for_write = True
+    399         obj.save(force_insert=True, using=self.db)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/base.py in __init__(self, *args, **kwargs)
+    553                     pass
+    554             if kwargs:
+--> 555                 raise TypeError("'%s' is an invalid keyword argument for this function" % list(kwargs)[0])
+    556         super(Model, self).__init__()
+    557         signals.post_init.send(sender=self.__class__, instance=self)
+
+TypeError: 'name' is an invalid keyword argument for this function
+
+In [3]: Book.objects.create(title="C Sharp")                                                                                                         
+Out[3]: <Book: Book object>
+
+In [4]: Book.objects.create(title="Java")                                                                                                            
+Out[4]: <Book: Book object>
+
+In [5]: Book.objects.create(title="Python")                                                                                                          
+Out[5]: <Book: Book object>
+
+In [6]: Book.objects.create(title="PHP")                                                                                                             
+Out[6]: <Book: Book object>
+
+In [7]: Book.objects.create(title="Ruby")                                                                                                            
+Out[7]: <Book: Book object>
+
+In [8]: Books.objects.values()                                                                                                                       
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-8-6f6533a88a10> in <module>
+----> 1 Books.objects.values()
+
+NameError: name 'Books' is not defined
+
+In [9]: Book.objects.value()                                                                                                                         
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-9-56e2f6cd97f7> in <module>
+----> 1 Book.objects.value()
+
+AttributeError: 'Manager' object has no attribute 'value'
+
+In [10]: Book.objects.values()                                                                                                                       
+Out[10]: <QuerySet [{'id': 1, 'title': 'C Sharp', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 45, 48518, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 45, 48866, tzinfo=<UTC>)}, {'id': 2, 'title': 'Java', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605929, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605973, tzinfo=<UTC>)}, {'id': 3, 'title': 'Python', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222461, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222506, tzinfo=<UTC>)}, {'id': 4, 'title': 'PHP', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959266, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959304, tzinfo=<UTC>)}, {'id': 5, 'title': 'Ruby', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710255, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710307, tzinfo=<UTC>)}]>
+
+In [11]: Author.objects.create(first_name="Jane", last_name="Austen")                                                                                
+Out[11]: <Author: Author object>
+
+In [12]: Author.objects.create(first_name="Emily", last_name="Dickinson")                                                                            
+Out[12]: <Author: Author object>
+
+In [13]: Author.objects.create(first_name="Fyodor", last_name="Dostoevksy")                                                                          
+Out[13]: <Author: Author object>
+
+In [14]: Author.objects.create(first_name="William", last_name="Shakespeare")                                                                        
+Out[14]: <Author: Author object>
+
+In [15]: Author.objects.create(first_name="Lau", last_name="Tzu")                                                                                    
+Out[15]: <Author: Author object>
+
+In [16]:                                                                                                                                             
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py makemigrations
+You are trying to add a non-nullable field 'notes' to author without a default; we can't do that (the database needs something to populate existing rows).
+Please select a fix:
+ 1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
+ 2) Quit, and let me add a default in models.py
+Select an option: 1
+Please enter the default value now, as valid Python
+The datetime and django.utils.timezone modules are available, so you can do e.g. timezone.now
+Type 'exit' to exit this prompt
+>>> ""
+Migrations for 'books_authors_app':
+  apps/books_authors_app/migrations/0002_author_notes.py:
+    - Add field notes to author
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, books_authors_app, contenttypes, sessions
+Running migrations:
+  Rendering model states... DONE
+  Applying books_authors_app.0002_author_notes... OK
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: book_update1 = Book.objects.get(title="C Sharp")                                                                                             
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-1-89fb11e8ca1a> in <module>
+----> 1 book_update1 = Book.objects.get(title="C Sharp")
+
+NameError: name 'Book' is not defined
+
+In [2]: from apps.books_authors_app.models import *                                                                                                  
+
+In [3]: book_update1 = Book.objects.get(title="C Sharp")                                                                                             
+
+In [4]: book_update1.title = "C#"                                                                                                                    
+
+In [5]: Book.objects.values()                                                                                                                        
+Out[5]: <QuerySet [{'id': 1, 'title': 'C Sharp', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 45, 48518, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 45, 48866, tzinfo=<UTC>)}, {'id': 2, 'title': 'Java', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605929, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605973, tzinfo=<UTC>)}, {'id': 3, 'title': 'Python', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222461, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222506, tzinfo=<UTC>)}, {'id': 4, 'title': 'PHP', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959266, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959304, tzinfo=<UTC>)}, {'id': 5, 'title': 'Ruby', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710255, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710307, tzinfo=<UTC>)}]>
+
+In [6]: book_update1.save()                                                                                                                          
+
+In [7]: Book.objects.values()                                                                                                                        
+Out[7]: <QuerySet [{'id': 1, 'title': 'C#', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 45, 48518, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 9, 26, 9586, tzinfo=<UTC>)}, {'id': 2, 'title': 'Java', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605929, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 51, 605973, tzinfo=<UTC>)}, {'id': 3, 'title': 'Python', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222461, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 3, 56, 222506, tzinfo=<UTC>)}, {'id': 4, 'title': 'PHP', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959266, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 1, 959304, tzinfo=<UTC>)}, {'id': 5, 'title': 'Ruby', 'desc': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710255, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 4, 9, 710307, tzinfo=<UTC>)}]>
+
+In [8]: fourthauth = Author.objects.get(id=4)                                                                                                        
+
+In [9]: fourthauth.first_name                                                                                                                        
+Out[9]: 'William'
+
+In [10]: fourthauth.first_name = "Bill"                                                                                                              
+
+In [11]: Author.objects.values()                                                                                                                     
+Out[11]: <QuerySet [{'id': 1, 'first_name': 'Jane', 'last_name': 'Austen', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 5, 22, 915729, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 5, 22, 915792, tzinfo=<UTC>)}, {'id': 2, 'first_name': 'Emily', 'last_name': 'Dickinson', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 5, 42, 551562, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 5, 42, 551600, tzinfo=<UTC>)}, {'id': 3, 'first_name': 'Fyodor', 'last_name': 'Dostoevksy', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 0, 256463, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 6, 0, 256508, tzinfo=<UTC>)}, {'id': 4, 'first_name': 'William', 'last_name': 'Shakespeare', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 16, 423386, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 6, 16, 423423, tzinfo=<UTC>)}, {'id': 5, 'first_name': 'Lau', 'last_name': 'Tzu', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 28, 656242, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 6, 28, 656280, tzinfo=<UTC>)}]>
+
+In [12]: fourthauth.save()                                                                                                                           
+
+In [13]: Author.objects.values()                                                                                                                     
+Out[13]: <QuerySet [{'id': 1, 'first_name': 'Jane', 'last_name': 'Austen', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 5, 22, 915729, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 5, 22, 915792, tzinfo=<UTC>)}, {'id': 2, 'first_name': 'Emily', 'last_name': 'Dickinson', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 5, 42, 551562, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 5, 42, 551600, tzinfo=<UTC>)}, {'id': 3, 'first_name': 'Fyodor', 'last_name': 'Dostoevksy', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 0, 256463, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 6, 0, 256508, tzinfo=<UTC>)}, {'id': 4, 'first_name': 'Bill', 'last_name': 'Shakespeare', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 16, 423386, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 10, 56, 898576, tzinfo=<UTC>)}, {'id': 5, 'first_name': 'Lau', 'last_name': 'Tzu', 'notes': '', 'created_at': datetime.datetime(2019, 9, 5, 2, 6, 28, 656242, tzinfo=<UTC>), 'updated_at': datetime.datetime(2019, 9, 5, 2, 6, 28, 656280, tzinfo=<UTC>)}]>
+
+In [14]: jane = Author.objects.get(id=1)                                                                                                             
+
+In [15]: jane.first_name                                                                                                                             
+Out[15]: 'Jane'
+
+In [16]: firsttwo = Book.objects.filter(id < 3)                                                                                                      
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-16-253dcc90ccd9> in <module>
+----> 1 firsttwo = Book.objects.filter(id < 3)
+
+TypeError: '<' not supported between instances of 'builtin_function_or_method' and 'int'
+
+In [17]: firstbook = Book.objects.filter(id=1)                                                                                                       
+
+In [18]: firstbook.title                                                                                                                             
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-18-053af0567afc> in <module>
+----> 1 firstbook.title
+
+AttributeError: 'QuerySet' object has no attribute 'title'
+
+In [19]: firstbook                                                                                                                                   
+Out[19]: <QuerySet [<Book: Book object>]>
+
+In [20]: firstbook[0]                                                                                                                                
+Out[20]: <Book: Book object>
+
+In [21]: firstbook[0].title                                                                                                                          
+Out[21]: 'C#'
+
+In [22]: firstbook = Book.objects.get(id=1)                                                                                                          
+
+In [23]: firstbook.title                                                                                                                             
+Out[23]: 'C#'
+
+In [24]: jane.books.add(firstbook)                                                                                                                   
+
+In [25]: jane.books                                                                                                                                  
+Out[25]: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager at 0x105482a20>
+
+In [26]: jane.books.all()                                                                                                                            
+Out[26]: <QuerySet [<Book: Book object>]>
+
+In [27]: firstbook.authors.all()                                                                                                                     
+Out[27]: <QuerySet [<Author: Author object>]>
+
+In [28]: firstbook.authors.all()                                                                                                                     
+Out[28]: <QuerySet [<Author: Author object>]>
+
+In [29]: firstbook.authors.all()                                                                                                                     
+Out[29]: <QuerySet [<Author: Author object>]>
+
+In [30]:                                                                                                                                             
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.books_authors_app.models import *                                                                                                  
+
+In [2]: firstbook.authors.all()                                                                                                                      
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-2-b60751d8dce9> in <module>
+----> 1 firstbook.authors.all()
+
+NameError: name 'firstbook' is not defined
+
+In [3]: firstbook = Book.objects.get(id=1)                                                                                                           
+
+In [4]: firstbook                                                                                                                                    
+Out[4]: <Book: Book object>
+
+In [5]:                                                                                                                                              
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py makemigrations
+No changes detected
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, books_authors_app, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.books_authors_app.models import *                                                                                                  
+
+In [2]: firstbook = Book.objects.get(id=1)                                                                                                           
+
+In [3]: firstbook                                                                                                                                    
+Out[3]: <Book: Book object>
+
+In [4]: print(firstbook)                                                                                                                             
+Book object
+
+In [5]: firstbook.title                                                                                                                              
+Out[5]: 'C#'
+
+In [6]: firstbook.notes                                                                                                                              
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-6-c4a1da61cfab> in <module>
+----> 1 firstbook.notes
+
+AttributeError: 'Book' object has no attribute 'notes'
+
+In [7]: firstbook.created_at                                                                                                                         
+Out[7]: datetime.datetime(2019, 9, 5, 2, 3, 45, 48518, tzinfo=<UTC>)
+
+In [8]: firstbook.desc                                                                                                                               
+Out[8]: ''
+
+In [9]: firstbook                                                                                                                                    
+Out[9]: <Book: Book object>
+
+In [10]: firstbook.values()                                                                                                                          
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-10-c1f288a4c944> in <module>
+----> 1 firstbook.values()
+
+AttributeError: 'Book' object has no attribute 'values'
+
+In [11]: firstbook.values()                                                                                                                          
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+<ipython-input-11-c1f288a4c944> in <module>
+----> 1 firstbook.values()
+
+AttributeError: 'Book' object has no attribute 'values'
+
+In [12]: firstbook                                                                                                                                   
+Out[12]: <Book: Book object>
+
+In [13]: print(firstbook)                                                                                                                            
+Book object
+
+In [14]:                                                                                                                                             
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py makemigrations
+No changes detected
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, books_authors_app, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: print(firstbook)                                                                                                                             
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-1-b64ceca69779> in <module>
+----> 1 print(firstbook)
+
+NameError: name 'firstbook' is not defined
+
+In [2]: from apps.books_authors_app.models import *                                                                                                  
+
+In [3]: secondbook = Book.objects.get(id=2)                                                                                                          
+
+In [4]: secondbook                                                                                                                                   
+Out[4]: <Book: Book object>
+
+In [5]: print(secondbook)                                                                                                                            
+Book object
+
+In [6]: jane                                                                                                                                         
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-6-9989c4c9e841> in <module>
+----> 1 jane
+
+NameError: name 'jane' is not defined
+
+In [7]: jane = Author.objects.get(id=1)                                                                                                              
+
+In [8]: jane.books.add(secondbook)                                                                                                                   
+
+In [9]: jane.books                                                                                                                                   
+Out[9]: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager at 0x10cdf14a8>
+
+In [10]: jane.books.all()                                                                                                                            
+Out[10]: <QuerySet [<Book: Book object>, <Book: Book object>]>
+
+In [11]: jane.books.all()                                                                                                                            
+Out[11]: <QuerySet [<Book: Book object>, <Book: Book object>]>
+
+In [12]:                                                                                                                                             
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py makemigrations
+No changes detected
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, books_authors_app, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.books_authors_app.models import *                                                                                                  
+
+In [2]: jane = Author.objects.get(id=1)                                                                                                              
+
+In [3]: jane                                                                                                                                         
+Out[3]: <Author object: Jane Austen (1)>
+
+In [4]: jane.books                                                                                                                                   
+Out[4]: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager at 0x1104186d8>
+
+In [5]: jane.books.all()                                                                                                                             
+Out[5]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>]>
+
+In [6]: firstbook = Book.objects.get(id=1)                                                                                                           
+
+In [7]: secondbook= Book.objects.get(id=2)                                                                                                           
+
+In [8]: thirdbook = Book.objects.get(id=3)                                                                                                           
+
+In [9]: Author.objects.get(id=2)                                                                                                                     
+Out[9]: <Author object: Emily Dickinson (2)>
+
+In [10]: em = Author.objects.get(id=2)                                                                                                               
+
+In [11]: em.books                                                                                                                                    
+Out[11]: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager at 0x11042dc88>
+
+In [12]: em.books.all()                                                                                                                              
+Out[12]: <QuerySet []>
+
+In [13]: em.books.add(firstbook, secondbook)                                                                                                         
+
+In [14]: em.books.all()                                                                                                                              
+Out[14]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>]>
+
+In [15]: em.books.add(firstbook)                                                                                                                     
+
+In [16]: em.books.all()                                                                                                                              
+Out[16]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>]>
+
+In [17]: em.books.add(thirdbook)                                                                                                                     
+
+In [18]: fourthbook = Book.objects.get(id=4)                                                                                                         
+
+In [19]: Author.objects.get(id=3)                                                                                                                    
+Out[19]: <Author object: Fyodor Dostoevksy (3)>
+
+In [20]: fd = Author.objects.get(id=3)                                                                                                               
+
+In [21]: fd.books.add(firstbook, secondbook, thirdbook, fourthbook)                                                                                  
+
+In [22]:                                                                                                                                             
+Do you really want to exit ([y]/n)? 
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ ls
+apps                    book_authors_proj       db.sqlite3              manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:django jason$ ls
+django_full_stack       django_intro            django_orm              test.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:django jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ ls
+_python         django          flask           my_environments
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ cd my_environments/
+(djangoPy3Env) Jasons-MacBook-Pro-2:my_environments jason$ ls
+djangoPy3Env    py3Env
+(djangoPy3Env) Jasons-MacBook-Pro-2:my_environments jason$ source py3Env/
+bash: source: py3Env/: is a directory
+(djangoPy3Env) Jasons-MacBook-Pro-2:my_environments jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ ls
+_python         django          flask           my_environments
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ cd _python/
+(djangoPy3Env) Jasons-MacBook-Pro-2:_python jason$ ls
+OOP             fundamentals
+(djangoPy3Env) Jasons-MacBook-Pro-2:_python jason$ cd OOP/
+(djangoPy3Env) Jasons-MacBook-Pro-2:OOP jason$ ls
+doubly_linked_lst.py    introTDD.py             modularizing            store_products          zoo.py
+inheritance.py          mathdojo.py             singly_linked_list.py   users_bankaccount
+(djangoPy3Env) Jasons-MacBook-Pro-2:OOP jason$ cd store_products/
+(djangoPy3Env) Jasons-MacBook-Pro-2:store_products jason$ ls
+__pycache__     product.py      store.py        testhere.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:store_products jason$ python3 testhere.py 
+8d6a7be6-cf8b-11e9-8fc6-dca904904815
+8d6a7a6a-cf8b-11e9-8fc6-dca904904815
+8d6a7a6a-cf8b-11e9-8fc6-dca904904815
+bigmac was sold
+fries
+chxburger
+Traceback (most recent call last):
+  File "testhere.py", line 20, in <module>
+    for i in range(len(product_list)):
+NameError: name 'product_list' is not defined
+(djangoPy3Env) Jasons-MacBook-Pro-2:store_products jason$ python3 testhere.py 
+a90355a8-cf8b-11e9-8446-dca904904815
+a9035238-cf8b-11e9-8446-dca904904815
+a9035238-cf8b-11e9-8446-dca904904815
+bigmac was sold
+fries
+chxburger
+(djangoPy3Env) Jasons-MacBook-Pro-2:store_products jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:OOP jason$ ls
+doubly_linked_lst.py    introTDD.py             modularizing            store_products          zoo.py
+inheritance.py          mathdojo.py             singly_linked_list.py   users_bankaccount
+(djangoPy3Env) Jasons-MacBook-Pro-2:OOP jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:_python jason$ cd ..
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ ls
+_python         django          flask           my_environments
+(djangoPy3Env) Jasons-MacBook-Pro-2:python_stack jason$ cd django/
+(djangoPy3Env) Jasons-MacBook-Pro-2:django jason$ ls
+django_full_stack       django_intro            django_orm              test.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:django jason$ cd django_orm/
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ ls
+book_authors_proj       dojo_ninja              harrypotter
+(djangoPy3Env) Jasons-MacBook-Pro-2:django_orm jason$ cd book_authors_proj/
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ ls
+apps                    book_authors_proj       db.sqlite3              manage.py
+(djangoPy3Env) Jasons-MacBook-Pro-2:book_authors_proj jason$ python3 manage.py shell
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 16:52:21) 
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.8.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from apps.books_authors_app.models import *                                                                                                  
+
+In [2]: thirdauthor = Author.objects.get(id=3)                                                                                                       
+
+In [3]: thirdauthor.books.all()                                                                                                                      
+Out[3]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>, <Book object: Python (3)>, <Book object: PHP (4)>]>
+
+In [4]: fourthauthor = Author.objects.get(id=4)                                                                                                      
+
+In [5]: fourthauthor.books.all()                                                                                                                     
+Out[5]: <QuerySet []>
+
+In [6]: allbooks = Books.objects.all()                                                                                                               
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-6-8aa78ab3a4c6> in <module>
+----> 1 allbooks = Books.objects.all()
+
+NameError: name 'Books' is not defined
+
+In [7]: allbooks = Book.objects.all()                                                                                                                
+
+In [8]: allbooks                                                                                                                                     
+Out[8]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>, <Book object: Python (3)>, <Book object: PHP (4)>, <Book object: Ruby (5)>]>
+
+In [9]: fourthauthor                                                                                                                                 
+Out[9]: <Author object: Bill Shakespeare (4)>
+
+In [10]: fourthauthor.books.add(allbooks)                                                                                                            
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-10-547b7557000f> in <module>
+----> 1 fourthauthor.books.add(allbooks)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/fields/related_descriptors.py in add(self, *objs)
+    879             db = router.db_for_write(self.through, instance=self.instance)
+    880             with transaction.atomic(using=db, savepoint=False):
+--> 881                 self._add_items(self.source_field_name, self.target_field_name, *objs)
+    882 
+    883                 # If this is a symmetrical m2m relation to self, add the mirror entry in the m2m table
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/fields/related_descriptors.py in _add_items(self, source_field_name, target_field_name, *objs)
+   1026                         .filter(**{
+   1027                             source_field_name: self.related_val[0],
+-> 1028                             '%s__in' % target_field_name: new_ids,
+   1029                         }))
+   1030                 new_ids = new_ids - set(vals)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/query.py in filter(self, *args, **kwargs)
+    792         set.
+    793         """
+--> 794         return self._filter_or_exclude(False, *args, **kwargs)
+    795 
+    796     def exclude(self, *args, **kwargs):
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/query.py in _filter_or_exclude(self, negate, *args, **kwargs)
+    810             clone.query.add_q(~Q(*args, **kwargs))
+    811         else:
+--> 812             clone.query.add_q(Q(*args, **kwargs))
+    813         return clone
+    814 
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/sql/query.py in add_q(self, q_object)
+   1225         existing_inner = set(
+   1226             (a for a in self.alias_map if self.alias_map[a].join_type == INNER))
+-> 1227         clause, _ = self._add_q(q_object, self.used_aliases)
+   1228         if clause:
+   1229             self.where.add(clause, AND)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/sql/query.py in _add_q(self, q_object, used_aliases, branch_negated, current_negated, allow_joins, split_subq)
+   1251                     child, can_reuse=used_aliases, branch_negated=branch_negated,
+   1252                     current_negated=current_negated, connector=connector,
+-> 1253                     allow_joins=allow_joins, split_subq=split_subq,
+   1254                 )
+   1255                 joinpromoter.add_votes(needed_inner)
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/sql/query.py in build_filter(self, filter_expr, branch_negated, current_negated, can_reuse, connector, allow_joins, split_subq)
+   1181             else:
+   1182                 lhs = MultiColSource(alias, targets, sources, field)
+-> 1183             condition = lookup_class(lhs, value)
+   1184             lookup_type = lookup_class.lookup_name
+   1185         else:
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/lookups.py in __init__(self, lhs, rhs)
+     17     def __init__(self, lhs, rhs):
+     18         self.lhs, self.rhs = lhs, rhs
+---> 19         self.rhs = self.get_prep_lookup()
+     20         if hasattr(self.lhs, 'get_bilateral_transforms'):
+     21             bilateral_transforms = self.lhs.get_bilateral_transforms()
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/fields/related_lookups.py in get_prep_lookup(self)
+     54                 # only one as we don't get to the direct value branch otherwise.
+     55                 target_field = self.lhs.output_field.get_path_info()[-1].target_fields[-1]
+---> 56                 self.rhs = [target_field.get_prep_value(v) for v in self.rhs]
+     57         return super(RelatedIn, self).get_prep_lookup()
+     58 
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/fields/related_lookups.py in <listcomp>(.0)
+     54                 # only one as we don't get to the direct value branch otherwise.
+     55                 target_field = self.lhs.output_field.get_path_info()[-1].target_fields[-1]
+---> 56                 self.rhs = [target_field.get_prep_value(v) for v in self.rhs]
+     57         return super(RelatedIn, self).get_prep_lookup()
+     58 
+
+~/Desktop/CodingDojo/python_stack/my_environments/djangoPy3Env/lib/python3.7/site-packages/django/db/models/fields/__init__.py in get_prep_value(self, value)
+    944         if value is None:
+    945             return None
+--> 946         return int(value)
+    947 
+    948     def contribute_to_class(self, cls, name, **kwargs):
+
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'QuerySet'
+
+In [11]: for books in allbooks: 
+    ...:     print(books) 
+    ...:                                                                                                                                             
+Book object
+Book object
+Book object
+Book object
+Book object
+
+In [12]: for book in allbooks: 
+    ...:     fourthauthor.books.add(book) 
+    ...:                                                                                                                                             
+
+In [13]: fourthauthor                                                                                                                                
+Out[13]: <Author object: Bill Shakespeare (4)>
+
+In [14]: fourthauthor.books.all()                                                                                                                    
+Out[14]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>, <Book object: Python (3)>, <Book object: PHP (4)>, <Book object: Ruby (5)>]>
+
+In [15]: thirdbook = Book.objects.get(id=3)                                                                                                          
+
+In [16]: thirdbook                                                                                                                                   
+Out[16]: <Book object: Python (3)>
+
+In [17]: thirdbook.authors.all()                                                                                                                     
+Out[17]: <QuerySet [<Author object: Emily Dickinson (2)>, <Author object: Fyodor Dostoevksy (3)>, <Author object: Bill Shakespeare (4)>]>
+
+In [18]: em = Author.objects.get(id=2)                                                                                                               
+
+In [19]: thirdbooks.authors.remove(em)                                                                                                               
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-19-fc86ac528a9b> in <module>
+----> 1 thirdbooks.authors.remove(em)
+
+NameError: name 'thirdbooks' is not defined
+
+In [20]: thirdbook.authors.remove(em)                                                                                                                
+
+In [21]: fifthauthor = Author.objects.get(id=5)                                                                                                      
+
+In [22]: secondbook                                                                                                                                  
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-22-e8b42bafce9d> in <module>
+----> 1 secondbook
+
+NameError: name 'secondbook' is not defined
+
+In [23]: secondbook = Book.objects.get(id=2)                                                                                                         
+
+In [24]: secondbook.authors.add(fifthauthor)                                                                                                         
+
+In [25]: thirdauthor                                                                                                                                 
+Out[25]: <Author object: Fyodor Dostoevksy (3)>
+
+In [26]: thirdauthor.books.all()                                                                                                                     
+Out[26]: <QuerySet [<Book object: C# (1)>, <Book object: Java (2)>, <Book object: Python (3)>, <Book object: PHP (4)>]>
+
+In [27]: fifthbook                                                                                                                                   
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-27-6055d64e4a43> in <module>
+----> 1 fifthbook
+
+NameError: name 'fifthbook' is not defined
+
+In [28]: fifthbook = Book.objects.get(id=5)                                                                                                          
+
+In [29]:  
+    ...:  
+    ...: fifthbook.authors.all()                                                                                                                     
+Out[29]: <QuerySet [<Author object: Bill Shakespeare (4)>]>
+
+In [30]:  
+                                                                                                                                                     

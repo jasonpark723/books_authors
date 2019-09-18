@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>show page</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5 mx-auto">
+      <h1>{{ author.first_name }} {{ author.last_name }}</h1>
+      <h2>ID: {{ author.id }}</h2>
+      <h3 class="border border-primary w-100">Notes: {{ author.notes }}</h3>
+      <h3>Books</h3>
+      <ul>
+        {% for book in author.books.all %}
+        <li>{{ book.title }}</li>
+        {% endfor %}
+      </ul>
+      <form action="/authors/addbook" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="author_id" value="{{ author.id }}" />
+        <div class="form-group mt-5">
+          <label for="new_book">add new book</label>
+          <select
+            multiple
+            class="form-control"
+            id="new_book"
+            name="book_id"
+            placeholder="-select book-"
+          >
+            {% for book in filtered_book %}
+            <option value="{{ book.id }}">{{ book.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-lg btn-outline-warning">
+          Add
+        </button>
+      </form>
+      <a href="/authors" class="float-right">go back to see all authors</a>
+    </div>
+  </body>
+</html>
